@@ -1,27 +1,32 @@
 from math import log
 
+from binary_types import bytes_to_int, Endianness
 
-class Memory:
-	_ENDIANNESS: str = 'big'
 
+class VolatileMemory:
 	_data: bytearray
 
 	_data_bus_size: int
 	_address_bus_size: int
+	_endianness: Endianness
 
-	def __init__(self, size: int, data_bus_size: int, address_bus_size: int):
+	def __init__(self, size: int, data_bus_size: int, address_bus_size: int, endianness: Endianness):
+		if size % data_bus_size != 0:
+			raise ValueError(f"Requested size ({size}) misaligned with given address bus size ({address_bus_size})")
+
 		if log(size, 2 ** 8) > address_bus_size:
-			raise ValueError(f"Address size ({address_bus_size}) can't cover requested memory size ({size})")
+			raise ValueError(f"Address bus size ({address_bus_size}) can't cover requested memory size ({size})")
 
 		self._data = bytearray(size)
 		self._data_bus_size = data_bus_size
 		self._address_bus_size = address_bus_size
+		self._endianness = Endianness
 
 	def _get_address_int(self, address: bytes) -> int:
 		if len(address) != self._address_bus_size:
 			raise ValueError(f"Given address ({address}) does not match address bus size ({self._address_bus_size})")
 
-		idx: int = int.from_bytes(address, type(self)._ENDIANNESS)
+		idx: int = bytes_to_int(address, self._endianness)
 		if idx % self._data_bus_size != 0:
 			raise ValueError(f"Address ({address}) is misaligned with data bus size ({self._data_bus_size})")
 

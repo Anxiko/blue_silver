@@ -1,3 +1,4 @@
-from ram import Memory
+from binary_types import Endianness
+from memory import VolatileMemory
 
-memory: Memory = Memory(2 ** (8 * 2), 4, 2)
+memory: VolatileMemory = VolatileMemory(2 ** (8 * 2), 4, 2, Endianness.BIG_ENDIAN)
