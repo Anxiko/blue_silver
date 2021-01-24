@@ -1,9 +1,10 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import List
 
 from binary_types import as_byte
 from registers import Registers
-from interfaces import IInstruction
+from interfaces import IInstruction, CodeOp
 
 
 @dataclass
@@ -16,14 +17,43 @@ class RegisterInInstruction:
 		return Registers(register_index)
 
 
-class BaseInstruction(IInstruction, ABC):
+class NRegisterInstruction(IInstruction, ABC):
 	_FIRST_REGISTER: RegisterInInstruction = RegisterInInstruction(as_byte(0b00000111), 0)
 	_SECOND_REGISTER: RegisterInInstruction = RegisterInInstruction(as_byte(0b00111000), 3)
 
-	code: bytes
+	@classmethod
+	@abstractmethod
+	def get_text_code(cls) -> str:
+		pass
 
-	def __init__(self, code: bytes):
-		self.code = code
+	@classmethod
+	@abstractmethod
+	def get_byte_code(cls) -> bytes:
+		pass
+
+	@classmethod
+	@abstractmethod
+	def get_bitmask(cls) -> bytes:
+		pass
+
+	@classmethod
+	def get_codeop(cls) -> CodeOp:
+		return CodeOp(cls.get_text_code(), cls.get_byte_code(), cls.get_bitmask())
+
+
+class SingleRegisterInstruction(NRegisterInstruction, ABC):
+	@classmethod
+	def get_bitmask(cls) -> bytes:
+		return as_byte(0b11111000)
+
+	def get_register(self) -> Registers:
+		return type(self)._FIRST_REGISTER.parse_register(self.code)
+
+
+class DoubleRegisterInstruction(NRegisterInstruction, ABC):
+	@classmethod
+	def get_bitmask(cls) -> bytes:
+		return as_byte(0b11000000)
 
 	def get_first_register(self) -> Registers:
 		return type(self)._FIRST_REGISTER.parse_register(self.code)

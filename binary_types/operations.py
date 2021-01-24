@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Callable
 
 from .conversions import int_to_bytes, bytes_to_int
 from .endianness import Endianness
@@ -25,3 +25,19 @@ def b_increase(b1: bytes, v: int, endianness: Endianness) -> Tuple[bool, bytes]:
 	b2: bytes = int_to_bytes(v, len(b1), endianness)
 
 	return b_add(b1, b2, endianness)
+
+
+def bitwise_and(b1: int, b2: int) -> int:
+	return b1 & b2
+
+
+def bitwise_or(b1: int, b2: int) -> int:
+	return b1 | b2
+
+
+def bitwise_xor(b1: int, b2: int) -> int:
+	return b1 ^ b2
+
+
+def apply_binary_operation(bytes1: bytes, bytes2: bytes, op: Callable[[int, int], int]) -> bytes:
+	return bytes(op(b1, b2) for b1, b2 in zip(bytes1, bytes2))

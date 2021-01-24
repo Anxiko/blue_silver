@@ -1,19 +1,21 @@
 from binary_types import as_byte
-from interfaces.iinstruction import CodeOp
-from registers import StateRegisterBitmask
-from ..base import BaseInstruction
-from interfaces.icpu import ICpu
-from registers.registers import Registers
+from interfaces import ICpu
+from ..base import SingleRegisterInstruction
+from registers import StateRegisterBitmask, Registers
 
 
-class Addition(BaseInstruction):
+class Addition(SingleRegisterInstruction):
 	@classmethod
-	def get_codeop(cls) -> CodeOp:
-		return CodeOp('add', as_byte(0b01000))
+	def get_text_code(cls) -> str:
+		return 'add'
+
+	@classmethod
+	def get_byte_code(cls) -> bytes:
+		return as_byte(0b10000000)
 
 	def execute(self, cpu: ICpu) -> None:
 		acc: bytes = cpu.read_register(Registers.ACC)
-		operand_register: Registers = self.get_first_register()
+		operand_register: Registers = self.get_register()
 		operand: bytes = cpu.read_register(operand_register)
 
 		overflow: bool

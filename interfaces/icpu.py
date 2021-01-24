@@ -18,6 +18,14 @@ class ICpu(ABC):
 		pass
 
 	@abstractmethod
+	def read_ram(self, addr: bytes) -> bytes:
+		pass
+
+	@abstractmethod
+	def write_ram(self, addr: bytes, w: bytes) -> None:
+		pass
+
+	@abstractmethod
 	def read_state(self, state: StateRegisterBitmask) -> bool:
 		pass
 
