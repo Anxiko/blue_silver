@@ -1,13 +1,17 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import List
 
 from binary_types import apply_binary_operation, bitwise_and
 from .icpu import ICpu
+from .symbols import InstructionSymbol
 
 
 @dataclass
 class CodeOp:
 	text_code: str
+	arguments: List[InstructionSymbol]
+
 	byte_code: bytes
 	bitmask: bytes
 

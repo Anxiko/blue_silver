@@ -1,4 +1,5 @@
 from math import log
+from typing import Optional
 
 from binary_types import bytes_to_int, Endianness
 
@@ -10,7 +11,10 @@ class VolatileMemory:
 	address_bus_size: int
 	endianness: Endianness
 
-	def __init__(self, size: int, data_bus_size: int, address_bus_size: int, endianness: Endianness):
+	def __init__(
+			self, size: int, data_bus_size: int, address_bus_size: int, endianness: Endianness,
+			initial: Optional[bytes] = None
+	):
 		if size % data_bus_size != 0:
 			raise ValueError(f"Requested size ({size}) misaligned with given address bus size ({address_bus_size})")
 
@@ -18,6 +22,12 @@ class VolatileMemory:
 			raise ValueError(f"Address bus size ({address_bus_size}) can't cover requested memory size ({size})")
 
 		self._data = bytearray(size)
+		if initial is not None:
+			if len(initial) > size:
+				raise ValueError(
+					f"Initial memory contents are greater {len(initial)} than the memory's capacity {size}")
+			self._data[:len(initial)] = initial
+
 		self.data_bus_size = data_bus_size
 		self.address_bus_size = address_bus_size
 		self.endianness = endianness

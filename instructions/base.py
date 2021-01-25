@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import List
 
 from binary_types import as_byte
+from interfaces import InstructionSymbol
 from registers import Registers
 from interfaces import IInstruction, CodeOp
 
@@ -37,11 +38,23 @@ class NRegisterInstruction(IInstruction, ABC):
 		pass
 
 	@classmethod
+	@abstractmethod
+	def get_n_registers(cls) -> int:
+		pass
+
+	@classmethod
 	def get_codeop(cls) -> CodeOp:
-		return CodeOp(cls.get_text_code(), cls.get_byte_code(), cls.get_bitmask())
+		return CodeOp(
+			cls.get_text_code(), [InstructionSymbol.REGISTER] * cls.get_n_registers(),
+			cls.get_byte_code(), cls.get_bitmask()
+		)
 
 
 class SingleRegisterInstruction(NRegisterInstruction, ABC):
+	@classmethod
+	def get_n_registers(cls) -> int:
+		return 1
+
 	@classmethod
 	def get_bitmask(cls) -> bytes:
 		return as_byte(0b11111000)
@@ -51,6 +64,10 @@ class SingleRegisterInstruction(NRegisterInstruction, ABC):
 
 
 class DoubleRegisterInstruction(NRegisterInstruction, ABC):
+	@classmethod
+	def get_n_registers(cls) -> int:
+		return 2
+
 	@classmethod
 	def get_bitmask(cls) -> bytes:
 		return as_byte(0b11000000)

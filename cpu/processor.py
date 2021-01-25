@@ -1,10 +1,10 @@
 from typing import Union, Optional
 
 from binary_types import SpecSheet, as_byte, apply_binary_operation, bitwise_and, bitwise_xor
-from instructions.instruction_set import Dispatcher
 from interfaces import ICpu, IInstruction
 from memory import VolatileMemory
 from registers import Registers, StateRegisterBitmask
+from .dispatcher import Dispatcher
 
 
 class Processor(ICpu):
