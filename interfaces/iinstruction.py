@@ -38,6 +38,11 @@ class IInstruction(ABC):
 	def get_codeop(cls) -> CodeOp:
 		pass
 
+	@classmethod
+	@abstractmethod
+	def from_assembly(cls, code: str, arguments: List[str]) -> 'IInstruction':
+		pass
+
 	@abstractmethod
 	def execute(self, cpu: ICpu) -> None:
 		pass
