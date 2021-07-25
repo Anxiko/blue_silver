@@ -7,7 +7,7 @@ from registers import StateRegisterBitmask, Registers
 class Addition(SingleRegisterInstruction):
 	@classmethod
 	def get_text_code(cls) -> str:
-		return 'add'
+		return 'ADD'
 
 	@classmethod
 	def get_byte_code(cls) -> bytes:

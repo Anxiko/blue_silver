@@ -44,7 +44,7 @@ class Processor(ICpu):
 	def read_register(self, r: Registers) -> bytes:
 		if r == Registers.ZERO:
 			return as_byte(0) * self._spec_sheet.word_size
-		return self.register_bank.read(r.value)
+		return self.register_bank.read(as_byte(r.value))
 
 	def write_register(self, r: Registers, data: bytes) -> None:
 		if r == Registers.ZERO:
@@ -77,6 +77,10 @@ class Processor(ICpu):
 	def _reg_as_address(self, reg_or_idx: Union[Registers, int]) -> bytes:
 		idx: int = reg_or_idx.value if isinstance(reg_or_idx, Registers) else reg_or_idx
 		return self._spec_sheet.int_to_word(idx)
+
+	def run(self) -> None:
+		while True:  # TODO: halt execution when certain flag is set in state register
+			self.cycle()
 
 	def cycle(self) -> None:
 		instruction: bytes = self._fetch_instruction()

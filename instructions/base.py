@@ -55,16 +55,16 @@ class NRegisterInstruction(IInstruction, ABC):
 		if len(arguments) != cls.get_n_registers():
 			raise ValueError(f"Number of arguments doesn't match expected number of registers")
 
-		code: bytes = cls.get_codeop().byte_code
+		code: int = from_byte(cls.get_codeop().byte_code)
 		registers_in_instruction: List[ByteBitmask] = [cls._FIRST_REGISTER, cls._SECOND_REGISTER]
 
 		for argument, register_in_instruction in zip(arguments, registers_in_instruction):
-			register: Registers = Registers(argument)
+			register: Registers = Registers[argument.upper()]
 			register_number: int = register.value
 			register_code: bytes = register_in_instruction.to_masked_byte(as_byte(register_number))
-			code |= register_code
+			code |= from_byte(register_code)
 
-		return cls(code)
+		return cls(as_byte(code))
 
 
 class SingleRegisterInstruction(NRegisterInstruction, ABC):

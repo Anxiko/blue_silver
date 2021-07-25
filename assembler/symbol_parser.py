@@ -1,6 +1,5 @@
 import re
 from abc import ABC, abstractmethod
-from lib2to3.pygram import Symbols
 from math import ceil, log
 from re import Pattern, Match
 from typing import Dict, Type
@@ -25,6 +24,8 @@ class SymbolParser(ABC):
 	def parse(self) -> bytes:
 		pass
 
+
+# TODO: use this code on actual instruction parsing
 
 class RegisterParser(SymbolParser):
 	_PATTERN: Pattern = re.compile(r'\.(\w+)')
