@@ -2,7 +2,8 @@ import sys
 from typing import BinaryIO
 
 from binary_types import SpecSheet, Endianness
-from cpu import Processor
+from cpu import Processor, Dispatcher
+from instructions import INSTRUCTION_SET
 from memory import VolatileMemory
 from registers import Registers
 
@@ -35,8 +36,9 @@ def main() -> None:
 		RAM_SIZE_BYTES, WORD_SIZE, ADDR_BUS_SIZE_RAM, ENDIANNESS, instruction_memory)
 	register_bank: VolatileMemory = VolatileMemory(
 		REGISTER_BANK_SIZE_WORDS * WORD_SIZE, WORD_SIZE, ADDR_BUS_SIZE_REGISTERS, ENDIANNESS)
+	dispatcher: Dispatcher = Dispatcher(INSTRUCTION_SET)
 
-	cpu: Processor = Processor(SpecSheet(ENDIANNESS, WORD_SIZE, INSTRUCTION_SIZE), register_bank, ram)
+	cpu: Processor = Processor(SpecSheet(ENDIANNESS, WORD_SIZE, INSTRUCTION_SIZE), register_bank, ram, dispatcher)
 	cpu.run()
 
 

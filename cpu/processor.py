@@ -16,10 +16,12 @@ class Processor(ICpu):
 	_instruction_buffer: Optional[bytes]
 	_cached_instruction_word_addr: Optional[bytes]
 
-	def __init__(self, spec_sheet: SpecSheet, register_bank: VolatileMemory, ram: VolatileMemory):
+	def __init__(
+			self, spec_sheet: SpecSheet, register_bank: VolatileMemory, ram: VolatileMemory, dispatcher: Dispatcher):
 		self._spec_sheet = spec_sheet
 		self.register_bank = register_bank
 		self.ram = ram
+		self.dispatcher = dispatcher
 
 		self._instruction_buffer = None
 		self._cached_instruction_word_addr = None
@@ -44,31 +46,45 @@ class Processor(ICpu):
 	def read_register(self, r: Registers) -> bytes:
 		if r == Registers.ZERO:
 			return as_byte(0) * self._spec_sheet.word_size
-		return self.register_bank.read(as_byte(r.value))
+		return self.register_bank.read(as_byte(r.value * self._spec_sheet.word_size))
 
 	def write_register(self, r: Registers, data: bytes) -> None:
 		if r == Registers.ZERO:
 			pass
-		self.register_bank.write(r.value, data)
+		self.register_bank.write(as_byte(r.value * self._spec_sheet.word_size), data)
+
+	def _to_ram_addr(self, addr_as_w: bytes) -> bytes:
+		return self._spec_sheet.get_least_significant_bytes(addr_as_w, self.ram.address_bus_size)
 
 	def read_ram(self, addr: bytes) -> bytes:
-		return self.ram.read(addr)
+		return self.ram.read(self._to_ram_addr(addr))
 
 	def write_ram(self, addr: bytes, w: bytes) -> None:
-		self.ram.write(addr, w)
+		self.ram.write(self._to_ram_addr(addr), w)
+
+	def _to_state_mask(self, state: StateRegisterBitmask) -> bytes:
+		return self._spec_sheet.int_to_word(1 << state.value)
 
 	def read_state(self, state: StateRegisterBitmask) -> bool:
 		state_register: bytes = self.read_register(Registers.STATE)
-		state_mask: bytes = state.value
+		state_mask: bytes = self._to_state_mask(state)
 
 		masked_state: bytes = apply_binary_operation(state_register, state_mask, bitwise_and)
 
-		return bool(masked_state)
+		"""
+		Converting to bool won't work here, any non-empty bytes will return True.
+		any() works perfectly fine however: it will return True if there is at least a byte that is non-zero.
+		
+		The reason is simple: when iterating over bytes, which any() does, each byte is converted to int.
+		bool() just checks the number of bytes present, so it isn't suitable here.
+		"""
+		return any(masked_state)
 
 	def write_state(self, state: StateRegisterBitmask, v: bool) -> None:
 		if self.read_state(state) != v:
 			register: bytes = self.read_register(Registers.STATE)
-			register = apply_binary_operation(register, state.value, bitwise_xor)
+			state_mask: bytes = self._to_state_mask(state)
+			register = apply_binary_operation(register, state_mask, bitwise_xor)
 			self.write_register(Registers.STATE, register)
 
 	def get_spec_sheet(self) -> SpecSheet:
