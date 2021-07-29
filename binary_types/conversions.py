@@ -14,4 +14,4 @@ def as_byte(v: int) -> bytes:
 
 
 def from_byte(b: bytes) -> int:
-	return bytes_to_int(b, Endianness.BIG_ENDIAN) # Endianness doesn't matter for a single byte
+	return bytes_to_int(b, Endianness.BIG_ENDIAN)  # Endianness doesn't matter for a single byte

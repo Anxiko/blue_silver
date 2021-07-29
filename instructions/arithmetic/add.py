@@ -11,7 +11,7 @@ class Addition(SingleRegisterInstruction):
 
 	@classmethod
 	def get_byte_code(cls) -> bytes:
-		return as_byte(0b10000000)
+		return as_byte(0b01000 << 3)
 
 	def execute(self, cpu: ICpu) -> None:
 		acc: bytes = cpu.read_register(Registers.ACC)

@@ -40,7 +40,7 @@ class IInstruction(ABC):
 
 	@classmethod
 	@abstractmethod
-	def from_assembly(cls, code: str, arguments: List[str]) -> 'IInstruction':
+	def from_assembly(cls, text_code: str, arguments: List[str]) -> 'IInstruction':
 		pass
 
 	@abstractmethod

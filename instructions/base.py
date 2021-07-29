@@ -11,8 +11,8 @@ from interfaces import IInstruction, CodeOp
 
 
 class NRegisterInstruction(IInstruction, ABC):
-	_FIRST_REGISTER: ByteBitmask = ByteBitmask(3, 0)
-	_SECOND_REGISTER: ByteBitmask = ByteBitmask(3, 3)
+	_FIRST_REGISTER: ByteBitmask = ByteBitmask(3, 3)  # Reading left to right, first register in instruction
+	_SECOND_REGISTER: ByteBitmask = ByteBitmask(3, 0)  # Appears on both 1 and 2 registers instructions
 
 	@classmethod
 	@abstractmethod
@@ -58,6 +58,21 @@ class NRegisterInstruction(IInstruction, ABC):
 		code: int = from_byte(cls.get_codeop().byte_code)
 		registers_in_instruction: List[ByteBitmask] = [cls._FIRST_REGISTER, cls._SECOND_REGISTER]
 
+		"""
+		If there are less arguments than possible registers, the registers to be used should be the latest,
+		since those are the ones located in the less significant bits inside the instruction.
+		
+		If there is only one register, for example, it isn't the first one, it is the last one.
+		That's because registers are written towards the less significant bits inside the instruction,
+		while being read left to right. The first register to be read, will be writen towards the most significant bits,
+		and the last will form the least significant bits.
+		
+		In short, register bits are written within the machine code left to right, exactly as their written.
+		"""
+		if len(arguments) < len(registers_in_instruction):
+			# Beware of changing this to use a negative index here, it won't behave nicely if there are 0 arguments!
+			registers_in_instruction = registers_in_instruction[len(registers_in_instruction) - len(arguments):]
+
 		for argument, register_in_instruction in zip(arguments, registers_in_instruction):
 			register: Registers = Registers[argument.upper()]
 			register_number: int = register.value
@@ -77,7 +92,7 @@ class SingleRegisterInstruction(NRegisterInstruction, ABC):
 		return as_byte(0b11111000)
 
 	def get_register(self) -> Registers:
-		return self._extract_register(type(self)._FIRST_REGISTER)
+		return self._extract_register(type(self)._SECOND_REGISTER)
 
 
 class DoubleRegisterInstruction(NRegisterInstruction, ABC):
