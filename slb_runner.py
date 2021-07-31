@@ -38,7 +38,12 @@ def main() -> None:
 		REGISTER_BANK_SIZE_WORDS * WORD_SIZE, WORD_SIZE, ADDR_BUS_SIZE_REGISTERS, ENDIANNESS)
 	dispatcher: Dispatcher = Dispatcher(INSTRUCTION_SET)
 
-	cpu: Processor = Processor(SpecSheet(ENDIANNESS, WORD_SIZE, INSTRUCTION_SIZE), register_bank, ram, dispatcher)
+	cpu: Processor = Processor(
+		SpecSheet(ENDIANNESS, WORD_SIZE, INSTRUCTION_SIZE, ADDR_BUS_SIZE_RAM),
+		register_bank,
+		ram,
+		dispatcher
+	)
 	cpu.run()
 
 

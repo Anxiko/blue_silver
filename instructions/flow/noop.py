@@ -1,19 +1,16 @@
-from typing import List
+from binary_types import as_byte
+from interfaces import ICpu
+from ..base import NoArgumentsInstruction
 
-from interfaces import IInstruction, ICpu, CodeOp
 
-
-class NoOperation(IInstruction):
+class NoOperation(NoArgumentsInstruction):
 	@classmethod
-	def get_codeop(cls) -> CodeOp:
-		return CodeOp('NOOP', [], b'\x00', b'\xff')
+	def _get_text_code(cls) -> str:
+		return 'NOOP'
 
 	@classmethod
-	def from_assembly(cls, text_code: str, arguments: List[str]) -> 'IInstruction':
-		if text_code != cls.get_codeop().text_code:
-			raise ValueError(f"Text code {text_code} doesn't match the instruction's text code")
-
-		return cls(cls.get_codeop().byte_code)
+	def _get_byte_code(cls) -> bytes:
+		return as_byte(0b00000000)
 
 	def execute(self, cpu: ICpu) -> None:
 		pass

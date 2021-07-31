@@ -14,7 +14,7 @@ class Processor(ICpu):
 	dispatcher: Dispatcher
 
 	_instruction_buffer: Optional[bytes]
-	_cached_instruction_word_addr: Optional[bytes]
+	_cached_instruction_word_addr: Optional[int]
 
 	def __init__(
 			self, spec_sheet: SpecSheet, register_bank: VolatileMemory, ram: VolatileMemory, dispatcher: Dispatcher):
@@ -100,11 +100,15 @@ class Processor(ICpu):
 
 	def cycle(self) -> None:
 		instruction: bytes = self._fetch_instruction()
-		self._run_instruction(instruction)
+		decoded_instruction: IInstruction = self._decode_instruction(instruction)
+		self._run_instruction(decoded_instruction)
 
-	def _run_instruction(self, instruction: bytes) -> None:
-		decoded_instruction: IInstruction = self.dispatcher.dispatch(instruction)
+	def _run_instruction(self, decoded_instruction: IInstruction) -> None:
 		decoded_instruction.execute(self)
+
+	def _decode_instruction(self, b: bytes) -> IInstruction:
+		decoded_instruction: IInstruction = self.dispatcher.dispatch(b)
+		return decoded_instruction
 
 	def _fetch_instruction(self) -> bytes:
 		pc_register: bytes = self.read_register(Registers.PC)
@@ -115,10 +119,10 @@ class Processor(ICpu):
 		instruction_word_address: int = self._spec_sheet.word_size * (instruction_address // self._spec_sheet.word_size)
 
 		if self._cached_instruction_word_addr != instruction_word_address:
-			self._cached_instruction_word_addr = self._spec_sheet.int_to_word(instruction_word_address)
-			self._instruction_buffer = self.read_ram(self._cached_instruction_word_addr)
+			self._cached_instruction_word_addr = instruction_word_address
+			self._instruction_buffer = self.read_ram(self._spec_sheet.int_to_word(instruction_word_address))
 
-		instruction_in_word_offset: int = instruction_address % self._spec_sheet.instruction_size
+		instruction_in_word_offset: int = instruction_address % self._spec_sheet.word_size
 		return (
 			self._instruction_buffer
 			[instruction_in_word_offset:instruction_in_word_offset + self._spec_sheet.instruction_size]

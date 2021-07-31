@@ -6,11 +6,11 @@ from ..base import DoubleRegisterInstruction
 
 class CopyRegister(DoubleRegisterInstruction):
 	@classmethod
-	def get_text_code(cls) -> str:
+	def _get_text_code(cls) -> str:
 		return 'CPY'
 
 	@classmethod
-	def get_byte_code(cls) -> bytes:
+	def _get_byte_code(cls) -> bytes:
 		return as_byte(0b10 << 6)
 
 	def execute(self, cpu: ICpu) -> None:

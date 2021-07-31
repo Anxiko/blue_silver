@@ -11,6 +11,7 @@ class SpecSheet:
 	endianness: Endianness
 	word_size: int
 	instruction_size: int
+	address_size: int
 
 	def int_to_word(self, v: int) -> bytes:
 		return int_to_bytes(v, self.word_size, self.endianness)

@@ -1,5 +1,4 @@
-from binary_types import as_byte
-from binary_types.conversions import from_byte
+from .conversions import from_byte, as_byte
 
 
 class ByteBitmask:

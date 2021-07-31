@@ -6,11 +6,11 @@ from interfaces import ICpu
 
 class SwapRegisters(DoubleRegisterInstruction):
 	@classmethod
-	def get_text_code(cls) -> str:
+	def _get_text_code(cls) -> str:
 		return 'SWP'
 
 	@classmethod
-	def get_byte_code(cls) -> bytes:
+	def _get_byte_code(cls) -> bytes:
 		return as_byte(0b11 << 6)
 
 	def execute(self, cpu: ICpu) -> None:
