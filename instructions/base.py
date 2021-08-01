@@ -143,6 +143,10 @@ class DoubleRegisterInstruction(NRegisterInstruction, ABC):
 
 class DataNibbleInstruction(BaseInstruction, ABC):
 	@classmethod
+	def _get_arguments(cls) -> List[InstructionSymbol]:
+		return [InstructionSymbol.IMMEDIATE]
+
+	@classmethod
 	def _get_bitsmask(cls):
 		return as_byte(0b1111 << 4)
 

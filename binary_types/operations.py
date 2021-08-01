@@ -62,6 +62,10 @@ def b_flip_sign(b: bytes, endianness: Endianness) -> bytes:
 	return int_to_bytes(v, len(b) + 1, endianness, signed=True)
 
 
+def b_not(b: bytes) -> bytes:
+	return bytes([~v & 255 for v in b])
+
+
 def bitwise_and(b1: int, b2: int) -> int:
 	return b1 & b2
 

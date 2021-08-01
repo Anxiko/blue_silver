@@ -45,11 +45,11 @@ class SpecSheet:
 		else:
 			raise ValueError(f"Unknown endianness ({self.endianness})")
 
-	def left_pad(self, v: bytes) -> bytes:
-		if len(v) > self.word_size:
-			raise ValueError(f"Given value is longer ({len(v)}) than word size ({self.word_size})")
+	def left_pad(self, b: bytes) -> bytes:
+		if len(b) > self.word_size:
+			raise ValueError(f"Given value is longer ({len(b)}) than word size ({self.word_size})")
 		if self.endianness == Endianness.BIG_ENDIAN:
-			return b'\x00' * (self.word_size - len(v)) + v
+			return b'\x00' * (self.word_size - len(b)) + b
 		elif self.endianness == Endianness.LITTLE_ENDIAN:
-			return v + b'\x00' * (self.word_size - len(v))
+			return b + b'\x00' * (self.word_size - len(b))
 		raise ValueError(f"Unknown endianness ({self.endianness})")
