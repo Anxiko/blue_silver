@@ -1,0 +1,26 @@
+from binary_types import as_byte
+from interfaces import ICpu
+from ..base import SingleRegisterInstruction
+from registers import StateRegisterBitmask, Registers
+
+
+class Subtraction(SingleRegisterInstruction):
+	@classmethod
+	def _get_text_code(cls) -> str:
+		return 'SUB'
+
+	@classmethod
+	def _get_byte_code(cls) -> bytes:
+		return as_byte(0b01001 << 3)
+
+	def execute(self, cpu: ICpu) -> None:
+		acc: bytes = cpu.read_register(Registers.ACC)
+		operand_register: Registers = self.get_register()
+		operand: bytes = cpu.read_register(operand_register)
+
+		overflow: bool
+		result: bytes
+		overflow, result = cpu.get_spec_sheet().w_sub(acc, operand)
+
+		cpu.write_state(StateRegisterBitmask.OVERFLOW, overflow)
+		cpu.write_register(Registers.ACC, result)

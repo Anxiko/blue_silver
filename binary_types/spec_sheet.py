@@ -3,7 +3,7 @@ from typing import Tuple
 
 from .conversions import int_to_bytes, bytes_to_int
 from .endianness import Endianness
-from .operations import b_add, b_increase
+from .operations import b_add, b_increase, b_sub
 
 
 @dataclass
@@ -21,6 +21,9 @@ class SpecSheet:
 
 	def w_add(self, w1: bytes, w2: bytes) -> Tuple[bool, bytes]:
 		return b_add(w1, w2, self.endianness)
+
+	def w_sub(self, w1: bytes, w2: bytes) -> Tuple[bool, bytes]:
+		return b_sub(w1, w2, self.endianness)
 
 	def w_increase(self, w: bytes, v: int) -> Tuple[bool, bytes]:
 		return b_increase(w, v, self.endianness)

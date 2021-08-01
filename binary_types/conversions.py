@@ -1,12 +1,12 @@
 from .endianness import Endianness
 
 
-def bytes_to_int(b: bytes, endianness: Endianness) -> int:
-	return int.from_bytes(b, endianness.value)
+def bytes_to_int(b: bytes, endianness: Endianness, *, signed: bool = False) -> int:
+	return int.from_bytes(b, endianness.value, signed=signed)
 
 
-def int_to_bytes(v: int, sz: int, endianness: Endianness) -> bytes:
-	return v.to_bytes(sz, endianness.value)
+def int_to_bytes(v: int, sz: int, endianness: Endianness, *, signed: bool = False) -> bytes:
+	return v.to_bytes(sz, endianness.value, signed=signed)
 
 
 def as_byte(v: int) -> bytes:
