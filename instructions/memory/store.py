@@ -11,7 +11,7 @@ class StoreIntoMemory(NoArgumentsInstruction):
 
 	@classmethod
 	def _get_byte_code(cls) -> bytes:
-		return as_byte(0b00010001)
+		return as_byte(0b00001001)
 
 	def execute(self, cpu: ICpu) -> None:
 		full_address: bytes = cpu.read_register(Registers.ADDR)

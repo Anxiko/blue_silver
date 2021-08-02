@@ -27,7 +27,7 @@ class BranchIfGreaterUnsigned(BaseBranchingInstruction):
 
 	@classmethod
 	def _get_byte_code(cls) -> bytes:
-		return as_byte(0b00010010)
+		return as_byte(0b00010011)
 
 	@classmethod
 	def _operands_are_signed(cls) -> bool:
