@@ -13,11 +13,11 @@ class SpecSheet:
 	instruction_size: int
 	address_size: int
 
-	def int_to_word(self, v: int) -> bytes:
-		return int_to_bytes(v, self.word_size, self.endianness)
+	def int_to_word(self, v: int, *, signed: bool = False) -> bytes:
+		return int_to_bytes(v, self.word_size, self.endianness, signed=signed)
 
-	def word_to_int(self, w: bytes) -> int:
-		return bytes_to_int(w, self.endianness)
+	def word_to_int(self, w: bytes, *, signed: bool = False) -> int:
+		return bytes_to_int(w, self.endianness, signed=signed)
 
 	def w_add(self, w1: bytes, w2: bytes) -> Tuple[bool, bytes]:
 		return b_add(w1, w2, self.endianness)
