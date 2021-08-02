@@ -63,7 +63,7 @@ class Processor(ICpu):
 		self.ram.write(self._to_ram_addr(addr), w)
 
 	def _to_state_mask(self, state: StateRegisterBitmask) -> bytes:
-		return self._spec_sheet.int_to_word(1 << state.value)
+		return self._spec_sheet.int_to_word(state.value)
 
 	def read_state(self, state: StateRegisterBitmask) -> bool:
 		state_register: bytes = self.read_register(Registers.STATE)
@@ -95,13 +95,18 @@ class Processor(ICpu):
 		return self._spec_sheet.int_to_word(idx)
 
 	def run(self) -> None:
-		while True:  # TODO: halt execution when certain flag is set in state register
-			self.cycle()
+		while self.cycle():
+			pass
 
-	def cycle(self) -> None:
+	def cycle(self) -> bool:
+		if self.read_state(StateRegisterBitmask.HALT):
+			return False
+
 		instruction: bytes = self._fetch_instruction()
 		decoded_instruction: IInstruction = self._decode_instruction(instruction)
 		self._run_instruction(decoded_instruction)
+
+		return True
 
 	def _run_instruction(self, decoded_instruction: IInstruction) -> None:
 		decoded_instruction.execute(self)

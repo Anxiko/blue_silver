@@ -124,6 +124,9 @@ class SingleRegisterInstruction(NRegisterInstruction, ABC):
 	def get_register(self) -> Registers:
 		return self._extract_register(type(self)._SECOND_REGISTER)
 
+	def __repr__(self) -> str:
+		return f"{type(self).get_codeop().text_code} {self.get_register().name}"
+
 
 class DoubleRegisterInstruction(NRegisterInstruction, ABC):
 	@classmethod
@@ -139,6 +142,9 @@ class DoubleRegisterInstruction(NRegisterInstruction, ABC):
 
 	def get_second_register(self) -> Registers:
 		return self._extract_register(type(self)._SECOND_REGISTER)
+
+	def __repr__(self) -> str:
+		return f"{type(self).get_codeop().text_code} {self.get_first_register().name} {self.get_second_register().name}"
 
 
 class DataNibbleInstruction(BaseInstruction, ABC):
@@ -172,6 +178,9 @@ class DataNibbleInstruction(BaseInstruction, ABC):
 		masked_value: int = code_value & 0b1111
 		return masked_value
 
+	def __repr__(self) -> str:
+		return f"{type(self).get_codeop().text_code} {hex(self.get_immediate_value())}"
+
 
 class NoArgumentsInstruction(BaseInstruction, ABC):
 	@classmethod
@@ -185,3 +194,6 @@ class NoArgumentsInstruction(BaseInstruction, ABC):
 	@classmethod
 	def _from_assembly(cls, _: str, arguments: List[str]) -> 'IInstruction':
 		return cls(cls.get_codeop().byte_code)
+
+	def __repr__(self) -> str:
+		return f"{type(self).get_codeop().text_code}"

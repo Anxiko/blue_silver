@@ -1,5 +1,7 @@
-from enum import Enum
+from enum import IntFlag
 
 
-class StateRegisterBitmask(Enum):
-	OVERFLOW = 0
+class StateRegisterBitmask(IntFlag):
+	OVERFLOW = 1 << 0
+	HALT = 1 << 7
+

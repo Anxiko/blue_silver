@@ -6,7 +6,7 @@ from .arithmetic.sub import Subtraction
 from .branching import BranchIfEqual, BranchIfNotEqual, BranchIfGreater, BranchIfGreaterUnsigned, BranchIfLesser, \
 	BranchIfLesserUnsigned
 from .data import CopyRegister, SwapRegisters, LowDataNibbleCopy, HighDataNibbleCopy
-from .flow import NoOperation
+from .flow import NoOperation, Halt
 from .memory import LoadFromMemory, StoreIntoMemory
 
 INSTRUCTION_SET: Set[Type[IInstruction]] = {
@@ -20,6 +20,7 @@ INSTRUCTION_SET: Set[Type[IInstruction]] = {
 	HighDataNibbleCopy,
 
 	NoOperation,
+	Halt,
 
 	LoadFromMemory,
 	StoreIntoMemory,
@@ -47,6 +48,7 @@ INSTRUCTION_SET: Set[Type[IInstruction]] = {
 	- 0011 IIII (HNBL)
 - 000X XXXX (no arguments)
 	- 0000 0000 (NOOP)
+	- 0000 0001 (HALT)
 	- 0000 100X (memory load/store)
 		- 0000 1000 (LD)
 		- 0000 1001 (ST)
