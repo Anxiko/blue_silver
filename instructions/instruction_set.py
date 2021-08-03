@@ -1,8 +1,8 @@
 from typing import Set, Type
 
 from interfaces import IInstruction
-from .arithmetic import Addition
-from .arithmetic.sub import Subtraction
+from .arithmetic import Addition, Subtraction, RightShiftUnsigned, LeftShiftUnsigned, RightShiftSigned, LeftShiftSigned, \
+	RightShiftByte, LeftShiftByte
 from .branching import BranchIfEqual, BranchIfNotEqual, BranchIfGreater, BranchIfGreaterUnsigned, BranchIfLesser, \
 	BranchIfLesserUnsigned
 from .data import CopyRegister, SwapRegisters, LowDataNibbleCopy, HighDataNibbleCopy
@@ -32,7 +32,14 @@ INSTRUCTION_SET: Set[Type[IInstruction]] = {
 	BranchIfGreaterUnsigned,
 
 	BranchIfLesser,
-	BranchIfLesserUnsigned
+	BranchIfLesserUnsigned,
+
+	RightShiftUnsigned,
+	LeftShiftUnsigned,
+	RightShiftSigned,
+	LeftShiftSigned,
+	RightShiftByte,
+	LeftShiftByte,
 }
 
 """
@@ -52,7 +59,17 @@ INSTRUCTION_SET: Set[Type[IInstruction]] = {
 	- 0000 100X (memory load/store)
 		- 0000 1000 (LD)
 		- 0000 1001 (ST)
-	- 0001 XXXX (branching and jumping)
+	- 0000 101X (byte shifting)
+		- 0000 1010 (SBL)
+		- 0000 1011 (SBR)
+	- 0000 11XX (shifting)
+		- 0000 110X (unsigned shifting)
+			- 0000 1100 (SHLU)
+			- 0000 1101 (SHRU)
+		- 0000 111X (signed shifting)
+			- 0000 1110 (SHLS)
+			- 0000 1111 (SHRS)
+	- 0001 0XXX (branching and jumping)
 		- 0001 000X (equality)
 			- 0001 0000 (BEQ)
 			- 0001 0001 (BNEQ)
